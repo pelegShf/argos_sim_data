@@ -1,6 +1,11 @@
 import pandas as pd
 import numpy as np
 
+from utils import data_cleaning
+
+
+# Polarization metric
+
 def polarization(df):
     N = len(df)
     deadCount = df['IsFaulty'].sum()
@@ -19,4 +24,7 @@ def polarization(df):
 def get_order(df):
     order_series = df.groupby('TimeStep').apply(polarization)
     order_series = order_series.round(4)
+    order_series = data_cleaning(order_series)
+
     return order_series
+
