@@ -28,14 +28,15 @@ for filename in glob.glob(DB + experiment_path + '/**/' + RAW_DATA_FILE, recursi
 
     exp_data = read_csv(filename)
     # order = get_order(exp_data)
-    union = get_union(exp_data)
+    # union = get_union(exp_data)
 
     centers = get_group_center(exp_data)
-    plot_series([union], f"debug_centers_{idx}")
-    avg_distance = get_distance_between_centers(exp_data)
-    plot_series([avg_distance], f"debug_avg_distance_{idx}")
+    # print(centers.head())
+    # plot_series([union], f"debug_centers_{idx}")
+    # avg_distance = get_distance_between_centers(exp_data)
+    # plot_series([avg_distance], f"debug_avg_distance_{idx}")
 
-    create_video(centers, -0.1, 0.1, -0.1, 0.1)
+    create_video(centers)
 
     if(debug):
         if 'order' not in locals():

@@ -1,12 +1,14 @@
+from matplotlib import pyplot as plt
 import networkx as nx
 import numpy as np
+import pandas as pd
 
 from utils import build_graph, data_cleaning
 
 import networkx as nx
 import numpy as np
 
-def calculate_group_centers(df, graph):
+def calculate_group_centers(graph):
     # Get the connected components of the graph
     components = nx.connected_components(graph)
 
@@ -14,13 +16,17 @@ def calculate_group_centers(df, graph):
     centers = []
     for component in components:
         # Get the x, y coordinates of the robots in the component
-        robots = df[df['RobotID'].isin(component)]
-        x_coords = robots['X']
-        y_coords = robots['Y']
+        x_coords = [graph.nodes[robot_id]['X'] for robot_id in component]
+        y_coords = [graph.nodes[robot_id]['Y'] for robot_id in component]
 
         # Calculate the centroid
         centroid = (np.mean(x_coords), np.mean(y_coords))
-        centers.append(centroid)
+
+        # Get the count of elements in the group
+        count = len(component)
+
+        # Append the centroid and count to the centers list
+        centers.append((centroid, count))
 
     return centers
 
@@ -34,7 +40,7 @@ def average_distance(centers):
     distances = []
     for i in range(len(centers)):
         for j in range(i+1, len(centers)):
-            distances.append(distance(centers[i], centers[j]))
+            distances.append(distance(centers[i][0], centers[j][0]))
 
     return np.mean(distances)
 
@@ -42,9 +48,12 @@ def average_distance(centers):
 def get_group_center(df,G=None):
     if G is None:
         G = df.groupby('TimeStep').apply(build_graph)
-    #graph = build_graph(df)
-    centers = G.apply(lambda x: calculate_group_centers(df,x))
+    centers = G.apply(lambda x: calculate_group_centers(x))
+    print(centers.head())
     centers = data_cleaning(centers)
+    # Convert the centers to a DataFrame and write to a CSV file
+    centers_df = pd.DataFrame(centers.tolist(), columns=['Center', 'Count'])
+    centers_df.to_csv('group_centers.csv', index=False)
 
     return centers
 

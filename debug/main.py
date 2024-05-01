@@ -33,27 +33,55 @@ import matplotlib.pyplot as plt
 import imageio
 import os
 
-def create_video(df, min_x, max_x, min_y, max_y):
+def create_video(df, every_T_frames=10):
     # Create a list to store the filenames of the plots
     filenames = []
 
+    # Find the min and max x and y coordinates
+    min_x, max_x, min_y, max_y = float('inf'), float('-inf'), float('inf'), float('-inf')
+    for centers in df:
+        coords, _ = zip(*centers)
+        x_coords, y_coords = zip(*coords)
+        min_x = min(min_x, min(x_coords))
+        max_x = max(max_x, max(x_coords))
+        min_y = min(min_y, min(y_coords))
+        max_y = max(max_y, max(y_coords))
+
+    # Add 10% padding to the limits
+    x_padding = (max_x - min_x) * 0.1
+    y_padding = (max_y - min_y) * 0.1
+    min_x -= x_padding
+    max_x += x_padding
+    min_y -= y_padding
+    max_y += y_padding
+
     for i, centers in enumerate(df):
-        # Unpack the x, y coordinates
-        x_coords, y_coords = zip(*centers)
+        # Only create a plot every T frames
+        if i % every_T_frames == 0:
+            # Unpack the x, y coordinates and sizes
+            coords, sizes = zip(*centers)
+            x_coords, y_coords = zip(*coords)
 
-        # Create a scatter plot of the group centers
-        plt.scatter(x_coords, y_coords, color='blue')
-        plt.xlim([min_x, max_x])  # Set the limits of the x-axis
-        plt.ylim([min_y, max_y])  # Set the limits of the y-axis
-        plt.title(f'Time: {i}')
+            # Increase all sizes by 2
+            sizes = [size + 2 for size in sizes]
 
-        # Save the plot to a file
-        filename = f'plot_{i}.png'
-        plt.savefig(filename)
-        filenames.append(filename)
+            # Create a scatter plot of the group centers
+            plt.scatter(x_coords, y_coords, s=sizes, color='blue')
+            plt.xlim([min_x, max_x])  # Set the limits of the x-axis
+            plt.ylim([min_y, max_y])  # Set the limits of the y-axis
+            plt.title(f'Time: {i}')
 
-        # Clear the plot for the next one
-        plt.clf()
+            # Add the coordinates next to the points
+            for j in range(len(x_coords)):
+                plt.text(x_coords[j], y_coords[j], f'({x_coords[j]:.4f}, {y_coords[j]:.4f})')
+
+            # Save the plot to a file
+            filename = f'plot_{i}.png'
+            plt.savefig(filename)
+            filenames.append(filename)
+
+            # Clear the plot for the next one
+            plt.clf()
 
     # Create a video from the plots
     with imageio.get_writer('group_centers.mp4', mode='I') as writer:
