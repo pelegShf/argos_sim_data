@@ -18,12 +18,17 @@ def data_cleaning(df):
 
 def build_graph(df):
     G = nx.Graph()
-    for _, row in df.iterrows():
-        robot_id = row[ROBOT_ID_COL]
-        neighbors = set(row[NEIGHBORS_COL].split())
-        
-        # Add node with DataFrame row as attributes
-        G.add_node(robot_id, **row[[X_COL, Y_COL, HEADING_COL, IS_FAULTY_COL]].to_dict())
-        for neighbor in neighbors:
-            G.add_edge(robot_id, neighbor)
+
+    # Add nodes with attributes
+    for row in df.itertuples():
+        robot_id = getattr(row, ROBOT_ID_COL)
+        neighbors = set(getattr(row, NEIGHBORS_COL).split())
+        attributes = {X_COL: getattr(row, X_COL), Y_COL: getattr(row, Y_COL), 
+                      HEADING_COL: getattr(row, HEADING_COL), IS_FAULTY_COL: getattr(row, IS_FAULTY_COL)}
+        G.add_node(robot_id, **attributes)
+
+    # Add edges
+    edges = [(row[ROBOT_ID_COL], neighbor) for _, row in df.iterrows() for neighbor in set(row[NEIGHBORS_COL].split())]
+    G.add_edges_from(edges)
+
     return G

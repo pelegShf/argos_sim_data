@@ -51,9 +51,7 @@ def get_group_center(df,G=None):
     centers = G.apply(lambda x: calculate_group_centers(x))
     print(centers.head())
     centers = data_cleaning(centers)
-    # Convert the centers to a DataFrame and write to a CSV file
-    centers_df = pd.DataFrame(centers.tolist(), columns=['Center', 'Count'])
-    centers_df.to_csv('group_centers.csv', index=False)
+
 
     return centers
 

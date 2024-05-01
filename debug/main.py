@@ -63,7 +63,7 @@ def create_video(df, every_T_frames=10):
             x_coords, y_coords = zip(*coords)
 
             # Increase all sizes by 2
-            sizes = [size + 2 for size in sizes]
+            sizes = [size * 3 for size in sizes]
 
             # Create a scatter plot of the group centers
             plt.scatter(x_coords, y_coords, s=sizes, color='blue')

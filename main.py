@@ -3,13 +3,16 @@
 
 import argparse
 import glob
+import time
+
+import pandas as pd
 from debug.main import create_video, debug_code
 from metrics.group_center import get_group_center, get_distance_between_centers
 from visualization.main import plot_series
 from metrics.order import get_order
 from metrics.union import get_union
 from consts import DB, RAW_DATA_FILE
-from utils import read_csv
+from utils import data_cleaning, read_csv
 
 
 # Get args from the command line
@@ -24,39 +27,43 @@ experiment_path = args.path
 debug = bool(args.debug)
 
 idx = 0
+unions_list = []
+file_len = len(glob.glob(DB + experiment_path + '/**/' + RAW_DATA_FILE, recursive=True))
+start_time = time.time()  # Start the timer
 for filename in glob.glob(DB + experiment_path + '/**/' + RAW_DATA_FILE, recursive=True):
 
     exp_data = read_csv(filename)
     # order = get_order(exp_data)
-    # union = get_union(exp_data)
-
-    centers = get_group_center(exp_data)
-    # print(centers.head())
-    # plot_series([union], f"debug_centers_{idx}")
+    union = get_union(exp_data,40)
+    unions_list.append(union)
+    # centers = get_group_center(exp_data)
     # avg_distance = get_distance_between_centers(exp_data)
-    # plot_series([avg_distance], f"debug_avg_distance_{idx}")
 
-    create_video(centers)
 
     if(debug):
         if 'order' not in locals():
             order = get_order(exp_data)
         if 'union' not in locals():
             union = get_union(exp_data)
+        if 'centers' not in locals():
+            centers = get_group_center(exp_data)
         debug_code(debug, filename, order, union, idx)
-
+        create_video(centers)
+    print(f"Finished {idx}/{file_len} - {filename}")
     idx += 1
 
-# for each file in the directory
+end_time = time.time()  # Stop the timer
 
-# exp_data = read_csv(DB+experiment_path)
+# save to file
+tst = pd.DataFrame(unions_list).T
+tst = data_cleaning(tst)
 
-# print(exp_data.head())
-# order = get_order(exp_data)
-# print(order.head())
+# Save the DataFrame to a CSV file
+tst.to_csv(f'unions_list_{end_time}.csv', index=False)
 
-# graphs_by_timestep = exp_data.groupby('TimeStep').apply(get_union, include_groups=False)
-# print(graphs_by_timestep)
+# plot_series(unions_list, 'Union')
 
-# # Read data from parameters.csv
-# exp_metrics = read_csv(DB+experiment_path)
+# To print later
+# test = pd.read_csv('unions_list.csv')
+plot_series(unions_list, f'Union_{end_time}')
+print(f"Running time: {end_time - start_time} seconds")
