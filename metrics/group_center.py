@@ -3,18 +3,23 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 
-from utils import build_graph, data_cleaning
+from consts import IS_FAULTY_COL, ROBOT_ID_COL
+from utils import build_graph
 
 import networkx as nx
 import numpy as np
 
-def calculate_group_centers(graph):
+def calculate_group_centers(graph,df):
     # Get the connected components of the graph
     components = nx.connected_components(graph)
 
     # Calculate the center of each component
     centers = []
+    count = 0
     for component in components:
+         # If all robots in the component are faulty, skip this component
+        if df.loc[df[ROBOT_ID_COL].isin(component), IS_FAULTY_COL].all():
+            continue
         # Get the x, y coordinates of the robots in the component
         x_coords = [graph.nodes[robot_id]['X'] for robot_id in component]
         y_coords = [graph.nodes[robot_id]['Y'] for robot_id in component]
@@ -27,6 +32,7 @@ def calculate_group_centers(graph):
 
         # Append the centroid and count to the centers list
         centers.append((centroid, count))
+        count += 1
 
     return centers
 
@@ -45,23 +51,20 @@ def average_distance(centers):
     return np.mean(distances)
 
 
-def get_group_center(df,G=None):
-    if G is None:
-        G = df.groupby('TimeStep').apply(build_graph)
-    centers = G.apply(lambda x: calculate_group_centers(x))
-    print(centers.head())
-    centers = data_cleaning(centers)
+def get_groups_center_and_amount(G=None):
+    idx = 0
+    centers = []
 
+    for graph, df in G:
+        center = calculate_group_centers(graph,df)
+        centers.append(center)
+        idx += 1
 
     return centers
 
 
 def get_distance_between_centers(df,G=None):
-    if G is None:
-        G = df.groupby('TimeStep').apply(build_graph)
-    centers = get_group_center(df,G)
-    distances = centers.apply(average_distance)
-    distances = data_cleaning(distances)
-
+    centers = get_groups_center_and_amount(G)
+    distances = [average_distance(center) for center in centers]
     return distances
 

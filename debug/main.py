@@ -1,7 +1,9 @@
 import os
+import matplotlib.pyplot as plt
+import imageio
 
 from consts import DEBUG_FOLDER, MATH_THRESHOLD
-from utils import data_cleaning, read_csv
+from utils import  read_csv
 from visualization.main import plot_series
 
 
@@ -19,19 +21,12 @@ def debug_code(debug, filename, order, union, idx):
 
         # Read the corresponding order_params_ file
         order_params = read_csv(order_params_filename)
-        order_params = data_cleaning(order_params)
         plot_series([order,order_params["Polarization"]], f"{DEBUG_FOLDER}debug_order_{idx}")
         #debug_metric(order_params["Polarization"].round(4),order)
         debug_metric(order_params["Union"].round(4),union)
         plot_series([union,order_params["Union"]], f"{DEBUG_FOLDER}debug_union_{idx}")
 
-import matplotlib.pyplot as plt
-import imageio
-import os
 
-import matplotlib.pyplot as plt
-import imageio
-import os
 
 def create_video(df, every_T_frames=10):
     # Create a list to store the filenames of the plots
