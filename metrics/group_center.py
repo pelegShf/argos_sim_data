@@ -3,7 +3,7 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 
-from consts import IS_FAULTY_COL, ROBOT_ID_COL
+from consts import IS_FAULTY_COL, ROBOT_ID_COL, X_COL, Y_COL
 from utils import build_graph
 
 import networkx as nx
@@ -21,8 +21,8 @@ def calculate_group_centers(graph,df):
         if df.loc[df[ROBOT_ID_COL].isin(component), IS_FAULTY_COL].all():
             continue
         # Get the x, y coordinates of the robots in the component
-        x_coords = [graph.nodes[robot_id]['X'] for robot_id in component]
-        y_coords = [graph.nodes[robot_id]['Y'] for robot_id in component]
+        x_coords = [graph.nodes[robot_id][X_COL] for robot_id in component]
+        y_coords = [graph.nodes[robot_id][Y_COL] for robot_id in component]
 
         # Calculate the centroid
         centroid = (np.mean(x_coords), np.mean(y_coords))

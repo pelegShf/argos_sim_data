@@ -11,6 +11,24 @@ This library provides tools for generating, manipulating, and visualizing simula
 
 ## How to Use
 
+### Command Line Arguments
+
+You can customize the behavior of the script using the following command line arguments:
+
+- `-i` or `--input_path`: This argument specifies the template for experiments. It should be a string representing the path to the input file. If not provided, it defaults to an empty string.
+
+- `-d` or `--debug`: This argument enables or disables debug mode. It should be an integer where 0 means false (debug mode off) and 1 means true (debug mode on). If not provided, it defaults to 0 (off).
+
+- `-m` or `--metric`: This argument specifies the metrics to be used. It should be a comma-separated list of metrics. Available metrics are: "order", "union", "centers", "avg_distance", "speed". If "all" is provided or if this argument is not provided, all metrics will be used.
+
+- `-l` or `--log`: This argument enables or disables logging. It should be an integer where 0 means false (logging off) and 1 means true (logging on). If not provided, it defaults to 1 (on).
+
+Here's an example of how to run the script with command line arguments:
+
+```bash
+python main.py -i "/path/to/input" -d 1 -m "order,avg_distance" -l 0
+```
+
 ### Generating and Saving Data
 
 1. Clone this repository to your local machine.
@@ -54,7 +72,7 @@ To plot your series data, use the plot_series function.
 
 Example usage:
 ```python
-rom argos_sim_data import plot_series
+from argos_sim_data import plot_series
 
 plot_series(series_list, avg=True, show_individual=False, error_type='se', to_pdf=True)
 ```

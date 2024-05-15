@@ -2,20 +2,30 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import importlib
 
+ALPHA = 0.3
 
-if 'visualization' in sys.modules:
-    # We're running from inside the visualization package
-    import_str = 'visualization.'
-else:
-    
-    # We're running from outside the visualization package
-    import_str = ''
+def set_plot_params(large):
+    plt.rcParams['figure.figsize'] = (10, 6)  # figure size
+    plt.rcParams['axes.grid'] = True  # Show grid by default
+    sns.set_palette("colorblind")
 
-
-settings = importlib.import_module(f'{import_str}settings')
-
+    if large: # Good for pdfs and papers
+        plt.rcParams['font.size'] = 18  # font size
+        plt.rcParams['axes.titlesize'] = 24  # title font size
+        plt.rcParams['axes.labelsize'] = 18  # label font size
+        plt.rcParams['lines.linewidth'] = 4  # line width
+        plt.rcParams['xtick.labelsize'] = 14  # tick label font size
+        plt.rcParams['ytick.labelsize'] = 14  # tick label font size
+        plt.rcParams['legend.fontsize'] = 16  # legend font size
+    else: # Good for checking plots
+        plt.rcParams['font.size'] = 12  # font size
+        plt.rcParams['axes.titlesize'] = 16  # title font size
+        plt.rcParams['axes.labelsize'] = 14  # label font size
+        plt.rcParams['lines.linewidth'] = 2  # line width
+        plt.rcParams['xtick.labelsize'] = 10  # tick label font size
+        plt.rcParams['ytick.labelsize'] = 10  # tick label font size
+        plt.rcParams['legend.fontsize'] = 12  # legend font size
 
 
 def plot_individual_series(series_list,color,label='Series'):
@@ -33,16 +43,14 @@ def plot_avg_series(series_list,color,label='Average Series', error_type='std'):
 
     plt.plot(avg_series, color=color, label=label)
     if error_type == 'std':
-        plt.fill_between(range(len(avg_series)), avg_series - error, avg_series + error, color=color, alpha=settings.ALPHA) # standard deviation
+        plt.fill_between(range(len(avg_series)), avg_series - error, avg_series + error, color=color, alpha=ALPHA) # standard deviation
     elif error_type == 'se':
-        plt.fill_between(range(len(avg_series)), avg_series - error, avg_series + error, color=color, alpha=settings.ALPHA) # standard error
+        plt.fill_between(range(len(avg_series)), avg_series - error, avg_series + error, color=color, alpha=ALPHA) # standard error
 
 
-def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=True, error_type='std',to_pdf=False):
-    if to_pdf:
-        settings = importlib.import_module(f'{import_str}settings_to_print')
-    else:
-        settings = importlib.import_module(f'{import_str}settings')
+def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=True, error_type='std',to_pdf=False,fix_y_axis=False):
+    set_plot_params(to_pdf)
+
 
     colors = sns.color_palette()
     for idx,series in enumerate(series_list):
@@ -56,6 +64,8 @@ def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=
                 plot_avg_series(series,colors[idx], error_type=error_type)
 
     plt.legend()
+    if fix_y_axis: # Fix y-axis to 0-1 for order parameter plots
+        plt.ylim(0,1)
     if filename is not None:
         plt.savefig(f'{filename}.png')
     else:

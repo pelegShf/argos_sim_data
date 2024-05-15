@@ -41,7 +41,9 @@ def build_graphs(df, num_rows_per_timestep):
         G.append((build_graph(df_subset), df_subset))
     return G
         
-        
+
+
+#TODO: either implement this or remove it
 class SharedNumpyArray:
     '''
     Wraps a numpy array so that it can be shared quickly among processes,
