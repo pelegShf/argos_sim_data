@@ -1,0 +1,6 @@
+05052024_2137/results/r45_d070524_0931/ Naive
+05052024_2151/results/r45_d070524_0947/ P&G w. early stoppage
+05052024_2232/results/r45_d070524_1007/ P&G w. early stoppage 100%
+05052024_2242/results/r45_d070524_0950/ P&G no early stoppage
+05052024_2256/results/r45_d070524_0953/ Force
+06052024_1128/results/r45_d070524_0958/ Fast

@@ -34,13 +34,12 @@ file_name = 'metrics_list.csv'
 
 complete_path = READ_DATA + data_file_name + DATA_FILE_TYPE
 with open(complete_path, 'r') as f:
-    file_paths = [line.strip() for line in f]
-
+    file_paths, labels = zip(*[line.strip().split(maxsplit=1) for line in f])
 
 # Process each file and store the results in a list
 dfs = [process_file(dir_path + file_path + file_name) for file_path in file_paths]
 
-labels = ["Naive","P&G w. early stoppage","P&G w. early stoppage 100%","P&G no early stoppage","Force","Fast"]
+# labels = ["Naive","P&G w. early stoppage","P&G w. early stoppage 100%","P&G no early stoppage","Force","Fast"]
 
 plot_filename = f"{SAVE_GRAPH}{data_file_name}"
 plot_series(dfs,filename=plot_filename, labels=labels, avg=True, show_individual=False, error_type='se', to_pdf=False)
