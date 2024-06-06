@@ -1,0 +1,11 @@
+05062024_1533/results/d050624_1536/ Free
+05062024_1821/results/d050624_1824/ 8 distances
+06062024_1233/results/d060624_1239/ 8 distances medium
+# 06062024_1248/results/d060624_1252/ 8 distances sparse in the middle
+06062024_1257/results/d060624_1300/ 8 distances sparse in the edges
+# 06062024_1305/results/d060624_1308/ 8 distances v2
+# 06062024_1312/results/d060624_1317/ 9 distances v3
+06062024_1355/results/d060624_1359/ 9 distances
+06062024_1406/results/d060624_1409/ 12 distances
+06062024_1411/results/d060624_1415/ 12 distances v2
+06062024_1420/results/d060624_1423/ 16 distances
