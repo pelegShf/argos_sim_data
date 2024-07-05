@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
+import math
+from visualization.main import plot_series
 
 def load_data(file_dir):
     return pd.read_csv(file_dir)
@@ -19,13 +21,12 @@ def calculate_chunked_average(rewards, chunk_size=100):
 def calculate_rewards(df, use_rolling_average):
     all_rewards = []  # List to store all rewards
     for row_number, row_data in df.iterrows():
-        rewards = pd.Series([float(reward) for reward in row_data["Rewards"].split()])
-        print(rewards)
+        rewards = pd.Series([float(reward) for reward in row_data["Rewards"].split()]).fillna(0.0)
         if use_rolling_average:
             avg_rewards = calculate_rolling_average(rewards)
         else:
             avg_rewards = calculate_chunked_average(rewards)
-        all_rewards.append(pd.Series(avg_rewards))  # Convert avg_rewards to a Series before appending
+        all_rewards.append(pd.Series(avg_rewards).fillna(0.0))  # Convert avg_rewards to a Series before appending
     return all_rewards
 
 def plot_rewards(all_rewards, use_rolling_average,file_dir, idx):
@@ -48,9 +49,9 @@ def main():
     
     # Plot a single experiment
     # idx = 1
-    time = 2057
+    time = 1543
     # file_dir = f"../data/DB/{idx}/robot_actions_{idx}.csv"
-    dir = f"../data/DB/2024_07/04072024/{time}/40/hyperparameter_set_0/X_RAY/"
+    dir = f"../data/DB/2024_07/05072024/{time}/MABLearning/40/hyperparameter_set_0/X_RAY/"
     # file_dir = f"{dir}/{idx}/robot_actions_{idx}.csv"
     # use_rolling_average = True  # Change this to False to use average of every 100
     # df = load_data(file_dir)
@@ -58,13 +59,12 @@ def main():
     # plot_rewards(all_rewards, use_rolling_average,dir, f"{idx}_{time}")
     
     
-    
     # Plot rewards for every 10th experiment from 850 to 1050
     for idx in range(1, 25,1):
         file_dir = f"{dir}/robot_actions_{idx}.csv"
         use_rolling_average = True  # Change this to False to use average of every 100
         df = load_data(file_dir)
-        all_rewards = calculate_rewards(df, use_rolling_average)
+        all_rewards = calculate_rewards(df, use_rolling_average)    
         plot_rewards(all_rewards, use_rolling_average,dir, f"{idx}_{time}")
         #  Clear the current figure
         plt.clf()
