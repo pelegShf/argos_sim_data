@@ -2,6 +2,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.cm as cm
 
 ALPHA = 0.3
 
@@ -33,6 +34,47 @@ def plot_individual_series(series_list,color,label='Series'):
     for i, series in enumerate(series_list):
         plt.plot(series, color=color, label=label)
 
+def plot_multi_lines(data, filename=None):
+    num_indices = 10
+    # Generate a colormap with `num_indices` colors
+    colormap = cm.get_cmap('hsv', num_indices)  # 'hsv' colormap provides a wide range of distinct colors
+
+    # Create a figure and axis
+    fig, ax = plt.subplots()
+
+    # Prepare data for plotting
+    x_vals = []
+    y_vals = []
+    colors = []
+
+    # Iterate through the data
+    for t, values in enumerate(data):
+        for idx, value in enumerate(values):
+            x_vals.append(t)
+            y_vals.append(value)
+            colors.append(colormap(idx % num_indices))
+
+
+    for idx in range(num_indices):
+        indices = [i for i, c in enumerate(colors) if c == colormap(idx)]
+        if indices:
+            ax.plot([x_vals[i] for i in indices], [y_vals[i] for i in indices], color=colormap(idx))
+
+
+    # Set labels and title
+    ax.set_xlabel('Time Step')
+    ax.set_ylabel('Values')
+    ax.set_title('Plotting List of Lists with Varying Lengths')
+
+    # Show the plot
+    if filename is not None:
+        plt.savefig(f'{filename}.png')
+    else:
+        plt.show()
+    plt.clf()
+
+
+
 
 def plot_avg_series(series_list,color,label='Average Series', error_type='std'):
     avg_series = np.mean(series_list, axis=0)
@@ -50,7 +92,6 @@ def plot_avg_series(series_list,color,label='Average Series', error_type='std'):
 
 def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=True, error_type='std',to_pdf=False,fix_y_axis=False):
     set_plot_params(to_pdf)
-
 
     colors = sns.color_palette()
     for idx,series in enumerate(series_list):

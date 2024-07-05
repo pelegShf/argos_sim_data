@@ -9,7 +9,7 @@ import multiprocessing
 
 from metrics.speed import get_speed
 from metrics.group_center import get_groups_center_and_amount, get_distance_between_centers
-from visualization.main import plot_series
+from visualization.main import plot_series, plot_multi_lines
 from metrics.order import get_order
 from metrics.union import get_union
 from consts import DB, RAW_DATA_FILE
@@ -28,12 +28,13 @@ def get_metrics(metrics):
 
 # Define a function to process a single file
 def process_file(args):
-    filename, metrics = args
+    filename, metrics,robot_count = args
 
     exp_data = utils.read_csv(filename)
-    rows_per_timestep = int(filename.split('/')[-4])
+    # rows_per_timestep = int(filename.split('/')[-4])
+    rows_per_timestep = robot_count
     order_in_metrics, union_in_metrics, centers_in_metrics, avg_distance_in_metrics, speed_in_metrics = get_metrics(metrics)
-
+    # print(f"outputing order: {order_in_metrics} | union: {union_in_metrics} | distance: {avg_distance_in_metrics} | speed: {speed_in_metrics}" )
     # Build graphs
     # start_time = time.time()
     G = utils.build_graphs(exp_data, rows_per_timestep)
@@ -51,13 +52,20 @@ def process_file(args):
 def save_logs(experiment_path,results ,metrics):
     orders_list, unions_list, centers_list, avg_distance_lists,speeds_list = zip(*results)
     order_in_metrics, union_in_metrics, centers_in_metrics, avg_distance_in_metrics, speed_in_metrics = get_metrics(metrics)
+    # Get the length of the first tuple
+
 
     output_dir_name = DB + experiment_path +f"/results/d{datetime.now().strftime('%d%m%y_%H%M')}"
     os.makedirs(output_dir_name, exist_ok=True)
     data = {}
     if union_in_metrics:
-        data['unions'] = [item for sublist in unions_list for item in sublist]
-        plot_series([unions_list],labels=["Avg. union"], filename=output_dir_name+f'/Union',show_individual=False,error_type='se')
+        data['unions'] = [item[0] for sublist in unions_list for item in sublist]
+        components, components_size, components_passed_distance= zip(*unions_list[0])
+        max_passed_distances = [max(t) for t in components_passed_distance]
+        components = [tuple([pd.Series(components)])]
+        max_passed_distances = [tuple([pd.Series(max_passed_distances)])]
+        plot_series(components,labels=["Avg. union"], filename=output_dir_name+f'/Union',show_individual=False,error_type='se')
+        plot_multi_lines(components_passed_distance,filename=output_dir_name+f'/Swarm_reward')
 
     if order_in_metrics:
         data['orders'] = [item for sublist in orders_list for item in sublist]
@@ -101,12 +109,13 @@ def main():
     parser.add_argument("-d", "--debug", type=int, default=False, help="Template for experiments")
     parser.add_argument("-m", "--metric", type=lambda s: s.split(','), default="all", help="all or any of: order, union, centers, avg_distance, speed")
     parser.add_argument("-l", "--log", type=int, default=True, help="Log the output")
-
+    parser.add_argument("-rc", "--robot_count", type=int, default=40, help="The count of robots in the swarm.")
     args = parser.parse_args()
     experiment_path = args.input_path
     debug = bool(args.debug)
     log = bool(args.log)
     metrics = args.metric
+    robot_count = args.robot_count
 
     # Get all the files in the experiment path
     file_list = glob.glob(DB + experiment_path + '/**/' + RAW_DATA_FILE, recursive=True)
@@ -117,7 +126,7 @@ def main():
     pool = multiprocessing.Pool(processes=num_processes)
     print(f"Number of processes: {num_processes}")
 
-    file_list_with_metrics = [(file, metrics) for file in file_list]
+    file_list_with_metrics = [(file, metrics,robot_count) for file in file_list]
     results = pool.map(process_file, file_list_with_metrics)
 
     if log:
