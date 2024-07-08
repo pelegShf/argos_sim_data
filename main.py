@@ -2,10 +2,10 @@ import argparse
 from datetime import datetime
 import glob
 import os
+import subprocess
 import time
 import pandas as pd
 import multiprocessing
-
 
 from metrics.speed import get_speed
 from metrics.group_center import get_groups_center_and_amount, get_distance_between_centers
@@ -134,6 +134,13 @@ def main():
         
     end_time = time.time()  # Stop the timer
     print(f"Running time: {end_time - start_time} seconds")
+ 
+    send_notification('Metric anlysis completed', f'Data is ready at {experiment_path}results/.')
 
+
+def send_notification(title, message):
+    subprocess.run(['notify-send', title, message])
+    
+    
 if __name__ == "__main__":
     main()
