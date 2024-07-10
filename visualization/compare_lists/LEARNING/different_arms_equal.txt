@@ -1,0 +1,8 @@
+2024_07/05072024/1706/results/d050724_1719/ Avoid-attract 1.1
+2024_07/09072024/1136/avoidAttract/40/hyperparameter_set_1/results/d090724_1139/ 1.11
+2024_07/09072024/1136/avoidAttract/40/hyperparameter_set_2/results/d090724_1141/ 1.09
+2024_07/09072024/1959/results/d090724_2008/ Random
+2024_07/09072024/1610/results/d090724_1620/ No approximation
+2024_07/09072024/1720/results/d090724_1733/ <Current, None, Worst>
+2024_07/09072024/1810/results/d090724_1818/ <Current, None, Avg>
+2024_07/09072024/1751/results/d090724_1759/ <Current, Worst, Worst>

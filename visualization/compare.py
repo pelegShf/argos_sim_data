@@ -14,7 +14,7 @@ DATA_FILE_TYPE = ".txt"
 # Get args from the command line
 parser = argparse.ArgumentParser(description="Run multiple experiments" )
 # Add command-line arguments with default values
-parser.add_argument("-fp", "--file_paths", type=str, required=True, help="File containing the paths to the files to process")
+parser.add_argument("-i", "--file_paths", type=str, required=True, help="File containing the paths to the files to process")
 parser.add_argument("-el", "--experiment_length", type=int, default=5000, help="Length of each experiment")
 
 args = parser.parse_args()

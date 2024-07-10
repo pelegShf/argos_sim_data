@@ -1,0 +1,11 @@
+2024_07/05072024/1706/results/d050724_1719/ Avoid-attract 1.1
+2024_07/05072024/1757/results/d050724_1814/ Avoid-attract 0.07
+2024_07/05072024/1821/results/d050724_1831/ Avoid-attract 1.4
+2024_07/09072024/1016/results/d090724_1025/ Random
+2024_07/08072024/1030/results/d080724_1039/ No approximation
+2024_07/08072024/1050/results/d080724_1059/ <Current, None, Worst>
+2024_07/08072024/1223/results/d080724_1239/ <Current, None, Best>
+2024_07/08072024/1201/results/d080724_1210/ <Current, None, Avg>
+2024_07/08072024/0919/results/d080724_0931/ <Current, Worst, Worst>
+2024_07/08072024/1126/results/d080724_1138/ <Current, Best, Best>
+#2024_07/08072024/1146/results/d080724_1155/ <Current, Avg, Avg>

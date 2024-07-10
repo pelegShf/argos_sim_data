@@ -1,4 +1,5 @@
 import networkx as nx
+from numpy import argmax
 from consts import *
 from utils import build_graph, get_coordinates, calculate_distance
 import math
@@ -30,8 +31,11 @@ def count_components(G, current_timestep_df, prev_timestep_df):
                 component_distance += calculate_distance(current_x, current_y, prev_x, prev_y)
         components_distances.append(component_distance)
         components_sizes.append(len(component))        
-
-    return (count, components_sizes, components_distances)
+    max_idx = argmax(components_sizes)
+    
+    #Now returns only the biggest swarm component. If needed, we can return all components.
+    # This will require to uncomment the code in the main.py file, under     if union_in_metrics:
+    return (count, components_sizes[max_idx], components_distances[max_idx])
 
 def worker(graph_df_tuple, prev_graph_df_tuple):    
     graph, df_subset = graph_df_tuple

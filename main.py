@@ -4,6 +4,7 @@ import glob
 import os
 import subprocess
 import time
+from numpy import argmax
 import pandas as pd
 import multiprocessing
 
@@ -58,14 +59,30 @@ def save_logs(experiment_path,results ,metrics):
     output_dir_name = DB + experiment_path +f"/results/d{datetime.now().strftime('%d%m%y_%H%M')}"
     os.makedirs(output_dir_name, exist_ok=True)
     data = {}
+    
+    
+
     if union_in_metrics:
         data['unions'] = [item[0] for sublist in unions_list for item in sublist]
-        components, components_size, components_passed_distance= zip(*unions_list[0])
-        max_passed_distances = [max(t) for t in components_passed_distance]
-        components = [tuple([pd.Series(components)])]
-        max_passed_distances = [tuple([pd.Series(max_passed_distances)])]
-        plot_series(components,labels=["Avg. union"], filename=output_dir_name+f'/Union',show_individual=False,error_type='se')
-        plot_multi_lines(components_passed_distance,filename=output_dir_name+f'/Swarm_reward')
+        components_list, components_size_list, components_passed_distance_list = [], [], []
+        for unions in unions_list:
+            components, components_size, components_passed_distance = zip(*unions)
+            components_list.append(pd.Series(components))
+            components_size_list.append(pd.Series(components_size))
+            components_passed_distance_list.append(pd.Series(components_passed_distance))
+            
+
+        
+        plot_series([components_list],labels=["Avg. union"], filename=output_dir_name+f'/Union',show_individual=False,error_type='se')
+        print(components_list)
+        plot_series([components_passed_distance_list],labels=["Avg. reward"], filename=output_dir_name+f'/reward',show_individual=False,error_type='se')
+        
+        # components, components_size, components_passed_distance= zip(*unions_list[0])
+        # max_passed_distances = [max(t) for t in components_passed_distance]
+        # components = [tuple([pd.Series(components)])]
+        # max_passed_distances = [tuple([pd.Series(max_passed_distances)])]
+        # plot_series(components,labels=["Avg. union"], filename=output_dir_name+f'/Union',show_individual=False,error_type='se')
+        # plot_multi_lines(components_passed_distance,filename=output_dir_name+f'/Swarm_reward')
 
     if order_in_metrics:
         data['orders'] = [item for sublist in orders_list for item in sublist]
