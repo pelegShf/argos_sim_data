@@ -42,16 +42,16 @@ def plot_rewards(all_rewards, use_rolling_average,file_dir, idx):
     plt.ylabel('Average reward')
     # plt.legend()
     plt.savefig(f"{file_dir}img_rewards{idx}")
-    # plt.show()
+    plt.show()
     
 
 def main():
     
     # Plot a single experiment
     # idx = 1
-    time = 1543
+    time = "1246"
     # file_dir = f"../data/DB/{idx}/robot_actions_{idx}.csv"
-    dir = f"../data/DB/2024_07/05072024/{time}/MABLearning/40/hyperparameter_set_0/X_RAY/"
+    dir = f"../data/DB/2024_07/25072024/{time}/MABLearning/40/hyperparameter_set_0/X_RAY/"
     # file_dir = f"{dir}/{idx}/robot_actions_{idx}.csv"
     # use_rolling_average = True  # Change this to False to use average of every 100
     # df = load_data(file_dir)
@@ -60,7 +60,7 @@ def main():
     
     
     # Plot rewards for every 10th experiment from 850 to 1050
-    for idx in range(1, 25,1):
+    for idx in range(1, 2,1):
         file_dir = f"{dir}/robot_actions_{idx}.csv"
         use_rolling_average = True  # Change this to False to use average of every 100
         df = load_data(file_dir)

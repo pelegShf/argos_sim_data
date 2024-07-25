@@ -7,14 +7,19 @@ import time
 from numpy import argmax
 import pandas as pd
 import multiprocessing
-
+import matplotlib.pyplot as plt
+import numpy as np
 from metrics.speed import get_speed
 from metrics.group_center import get_groups_center_and_amount, get_distance_between_centers
 from visualization.main import plot_series, plot_multi_lines
 from metrics.order import get_order
 from metrics.union import get_union
-from consts import DB, RAW_DATA_FILE
+from consts import DB, RAW_DATA_FILE, NEIGHBORS_FILE
 import utils
+
+
+
+
 
 def get_metrics(metrics):
     all_in_metrics = 'all' in metrics
@@ -29,26 +34,32 @@ def get_metrics(metrics):
 
 # Define a function to process a single file
 def process_file(args):
-    filename, metrics,robot_count = args
+    raw_data_filename, metrics,robot_count = args
 
-    exp_data = utils.read_csv(filename)
+    exp_data = utils.read_csv(raw_data_filename)
+
     # rows_per_timestep = int(filename.split('/')[-4])
     rows_per_timestep = robot_count
     order_in_metrics, union_in_metrics, centers_in_metrics, avg_distance_in_metrics, speed_in_metrics = get_metrics(metrics)
     # print(f"outputing order: {order_in_metrics} | union: {union_in_metrics} | distance: {avg_distance_in_metrics} | speed: {speed_in_metrics}" )
     # Build graphs
-    # start_time = time.time()
-    G = utils.build_graphs(exp_data, rows_per_timestep)
-
-    order = get_order(exp_data, rows_per_timestep) if order_in_metrics else []
-    union = get_union(exp_data, rows_per_timestep, G=G) if union_in_metrics else []
+    G = utils.build_graphs(exp_data, rows_per_timestep) # Around 17 seconds
+    order = get_order(exp_data, rows_per_timestep) if order_in_metrics else [] # Around 1 second
+    union = get_union(G=G) if union_in_metrics else [] # Around 17 second
     centers = get_groups_center_and_amount(G=G) if centers_in_metrics else ([], [])
     avg_distance = get_distance_between_centers(exp_data, G=G) if avg_distance_in_metrics else []
     avg_speed = get_speed(exp_data) if speed_in_metrics else []
     # print(f"Time taken for {filename}: {time.time() - start_time} seconds")
     return order, union, centers, avg_distance,avg_speed
 
-
+def infinite_horizon_rewards(rewards):
+    # Compute the cumulative sum of the rewards array
+    cumulative_sum = np.cumsum(rewards)
+    
+    # Compute the infinite horizon rewards
+    infinite_horizon = cumulative_sum / np.arange(1, len(rewards) + 1)
+    
+    return infinite_horizon
 
 def save_logs(experiment_path,results ,metrics):
     orders_list, unions_list, centers_list, avg_distance_lists,speeds_list = zip(*results)
@@ -70,23 +81,16 @@ def save_logs(experiment_path,results ,metrics):
             components_list.append(pd.Series(components))
             components_size_list.append(pd.Series(components_size))
             components_passed_distance_list.append(pd.Series(components_passed_distance))
-            
+            # components_passed_distance_list.append(pd.Series(infinite_horizon_rewards(components_passed_distance)))
+        data['swarm_reward'] = [item for sublist in components_passed_distance_list for item in sublist]
 
-        
         plot_series([components_list],labels=["Avg. union"], filename=output_dir_name+f'/Union',show_individual=False,error_type='se')
-        print(components_list)
-        plot_series([components_passed_distance_list],labels=["Avg. reward"], filename=output_dir_name+f'/reward',show_individual=False,error_type='se')
-        
-        # components, components_size, components_passed_distance= zip(*unions_list[0])
-        # max_passed_distances = [max(t) for t in components_passed_distance]
-        # components = [tuple([pd.Series(components)])]
-        # max_passed_distances = [tuple([pd.Series(max_passed_distances)])]
-        # plot_series(components,labels=["Avg. union"], filename=output_dir_name+f'/Union',show_individual=False,error_type='se')
-        # plot_multi_lines(components_passed_distance,filename=output_dir_name+f'/Swarm_reward')
+        plot_series([components_passed_distance_list],labels=["Avg. reward"], filename=output_dir_name+f'/reward',show_individual=False,error_type='se',fix_y_axis=0.08)
+
 
     if order_in_metrics:
         data['orders'] = [item for sublist in orders_list for item in sublist]
-        plot_series([orders_list],labels=["Avg. order"], filename=output_dir_name+f'/Order',show_individual=False,error_type='se',fix_y_axis=True)
+        plot_series([orders_list],labels=["Avg. order"], filename=output_dir_name+f'/Order',show_individual=False,error_type='se',fix_y_axis=1)
 
     if centers_in_metrics:
         data['centers'] = [item for sublist in centers_list for item in sublist]
@@ -103,7 +107,11 @@ def save_logs(experiment_path,results ,metrics):
     # Save the DataFrame to a CSV file
     save_df.to_csv(output_dir_name+f'/metrics_list.csv', index=False)
  
-
+def sanity_checks(raw_data_file_list, neighbors_file_list):
+    assert len(raw_data_file_list) > 0, "No files found"
+    assert len(neighbors_file_list) > 0, "No neighbors files found"
+    assert len(raw_data_file_list) == len(neighbors_file_list), "Number of raw data files and neighbors files do not match"
+    
 def main(): 
     """
     Run multiple experiments based on command line arguments.
@@ -135,16 +143,17 @@ def main():
     robot_count = args.robot_count
 
     # Get all the files in the experiment path
-    file_list = glob.glob(DB + experiment_path + '/**/' + RAW_DATA_FILE, recursive=True)
-    file_len = len(file_list)
+    raw_data_file_list = glob.glob(DB + experiment_path + '/**/' + RAW_DATA_FILE, recursive=True)
+    
+    file_len = len(raw_data_file_list)
     print(f"Total files: {file_len}")
 
     num_processes = multiprocessing.cpu_count()
     pool = multiprocessing.Pool(processes=num_processes)
     print(f"Number of processes: {num_processes}")
 
-    file_list_with_metrics = [(file, metrics,robot_count) for file in file_list]
-    results = pool.map(process_file, file_list_with_metrics)
+    files_list_with_metrics = [(raw_data_file, metrics,robot_count) for raw_data_file in raw_data_file_list]
+    results = pool.map(process_file, files_list_with_metrics)
 
     if log:
         save_logs(experiment_path,results, metrics)

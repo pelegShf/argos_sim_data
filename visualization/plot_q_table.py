@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Update according to the number of states in the code.
-start = 0.02
+start = 0.04
 end = 0.19
 STATE_SIZE = 8
 
@@ -14,16 +14,18 @@ ranges = [start + i * step for i in range(STATE_SIZE)]
 
 parser = argparse.ArgumentParser(description="Run multiple experiments" )
 parser.add_argument("-i", "--file_paths", type=str, required=True, help="File containing the paths to the files to process")
+parser.add_argument("-pre", "--prefix", type=str, default="/MABLearning/40/hyperparameter_set_0/X_RAY/", help="File containing the paths to the files to process")
 parser.add_argument("-m", "--method", choices=['argmax', 'max'], default='argmax', help="Choose method for processing (default: argmax)")
 parser.add_argument("-d","--data_type", choices=['count', 'value', 'q'], default='q', help="Choose data type to process (default: q)")
+
 args = parser.parse_args()
 data_file_name = args.file_paths
 method = args.method
 data_type = args.data_type
+model_size_path = args.prefix 
 
 
 dir_path = "../data/DB/"
-model_size_path ="/MABLearning/40/hyperparameter_set_0/X_RAY/"
 
 full_path = dir_path + data_file_name + model_size_path
 
@@ -40,7 +42,7 @@ argmax_list = []
 
 # Iterate over the file indices
 for idx in range(0, 39):  # Assuming 25 files
-    file_type =f"learner_20_{idx}.csv"
+    file_type =f"learner_1_{idx}.csv"
 
     file_path = os.path.join(full_path, file_type)
     

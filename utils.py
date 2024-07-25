@@ -7,14 +7,34 @@ from multiprocessing.shared_memory import SharedMemory
 
 from visualization.main import plot_series
 from consts import *
+import csv
 
 
 def read_csv(file_path):
     return pd.read_csv(file_path)
 
-# def data_cleaning(df):
-#     df = df.drop(df.index[0])
-#     return df
+def read_custom_csv(file_path, num_columns=40):
+    dataframes = []
+    
+    with open(file_path, 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            # Split the single cell by spaces to get the list of numbers
+            numbers = list(map(int, row[0].split()))
+            
+            # Ensure the numbers list is divisible by the number of columns
+            if len(numbers) % num_columns != 0:
+                print("Error: The number of elements is not divisible by the number of columns.")
+                return []
+            
+            # Reshape the list into the required DataFrame format
+            reshaped_data = [numbers[i:i + num_columns] for i in range(0, len(numbers), num_columns)]
+            df = pd.DataFrame(reshaped_data)
+            
+            # Append the DataFrame to the list
+            dataframes.append(df)
+    
+    return dataframes
 
 
 def build_graph(df):

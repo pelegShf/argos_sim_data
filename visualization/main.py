@@ -90,7 +90,7 @@ def plot_avg_series(series_list,color,label='Average Series', error_type='std'):
         plt.fill_between(range(len(avg_series)), avg_series - error, avg_series + error, color=color, alpha=ALPHA) # standard error
 
 
-def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=True, error_type='std',to_pdf=False,fix_y_axis=False):
+def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=True, error_type='std',to_pdf=False,fix_y_axis=0):
     set_plot_params(to_pdf)
 
     colors = sns.color_palette()
@@ -105,8 +105,8 @@ def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=
                 plot_avg_series(series,colors[idx], error_type=error_type)
 
     plt.legend()
-    if fix_y_axis: # Fix y-axis to 0-1 for order parameter plots
-        plt.ylim(0,1)
+    if fix_y_axis > 0: # Fix y-axis to 0-1 for order parameter plots
+        plt.ylim(0,fix_y_axis)
     if filename is not None:
         plt.savefig(f'{filename}.png')
     else:
