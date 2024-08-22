@@ -1,30 +1,15 @@
 import networkx as nx
 from numpy import argmax
+from metrics.utils import degrees_to_vector, is_angle_greater_than_90
 from consts import *
-from utils import build_graph, get_coordinates, calculate_distance
 import math
 import numpy as np
 from scipy.linalg import eigvals
 
-# def laplacian_matrix(adj_matrix):
-#     degree_matrix = np.diag(adj_matrix.sum(axis=1))
-#     return degree_matrix - adj_matrix
-
-# def count_connected_components(adj_matrix):
-#     # Compute the Laplacian matrix
-#     L = laplacian_matrix(adj_matrix)
-    
-#     # Compute the eigenvalues of the Laplacian matrix
-#     eigenvalues = eigvals(L)
-    
-#     # Count the number of zero eigenvalues (considering a small threshold to handle numerical precision)
-#     num_components = np.sum(np.isclose(eigenvalues, 0, atol=1e-10))
-    
-#     return num_components
 
 
 def get_coordinates_dict(df):
-    return {row[ROBOT_ID_COL]: (row[X_COL], row[Y_COL]) for _, row in df.iterrows()}
+    return {row[ROBOT_ID_COL]: (row[X_COL], row[Y_COL],row[HEADING_COL]) for _, row in df.iterrows()}
 
 def calculate_distance(x1, y1, x2, y2):
     dx = x2 - x1
@@ -33,13 +18,36 @@ def calculate_distance(x1, y1, x2, y2):
 
 def calculate_distances(current_coords, prev_coords, component):
     distances = [
-        calculate_distance(current_coords[robot_id][0], current_coords[robot_id][1],
-                           prev_coords[robot_id][0], prev_coords[robot_id][1])
+        calculate_distance_in_forward_direction(current_coords[robot_id][0], current_coords[robot_id][1],
+                           prev_coords[robot_id][0], prev_coords[robot_id][1],prev_coords[robot_id][2])
         for robot_id in component
     ]
     return sum(distances)
 
 
+
+
+
+def calculate_distance_in_forward_direction(x1, y1, x2, y2, direction_degrees):
+    """
+    Positive distance is if the bearing between the two points is between [pi/2,-pi/2]
+    Negative distance is if the bearing between the two points is between [pi,-pi/2] or [pi/2,-pi]
+    """
+    
+    if(x1 == x2 and y1 == y2):
+        return 0
+    
+    x = x1 - x2
+    y= y1 - y2
+    x_dir, y_dir = degrees_to_vector(direction_degrees)
+    dist = calculate_distance(x1, y1, x2, y2)
+    if is_angle_greater_than_90(x_dir, y_dir, x, y):
+        dist = -dist
+    # print(f"Distance: {dist}")
+    return dist
+    
+    
+    
 
 def count_components(G, current_timestep_df, prev_timestep_df,idx):
     """
@@ -70,7 +78,6 @@ def count_components(G, current_timestep_df, prev_timestep_df,idx):
             components_distances.append(component_distance)
         else:
             components_distances.append(0)
-    
     max_idx = np.argmax(components_sizes)
     
     #Now returns only the biggest swarm component. If needed, we can return all components.
@@ -86,3 +93,7 @@ def worker(graph_df_tuple, prev_graph_df_tuple,idx):
 def get_union( G=None):
     unions = [worker(g, G[i-1] if i > 0 else None,i) for i, g in enumerate(G)]    
     return unions
+
+
+
+

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import argparse
 import os
 
-def plot_histograms(data, unique_states, unique_actions):
+def plot_histograms(data, unique_states, unique_actions,save_dir=""):
     # Determine the number of rows for plotting
     num_states = len(unique_states)
     num_actions = len(unique_actions)
@@ -42,9 +42,11 @@ def plot_histograms(data, unique_states, unique_actions):
 
     plt.tight_layout()
     plt.subplots_adjust(hspace=0.5, wspace=0.3)
+    if save_dir != "":
+        plt.savefig(save_dir+"_histogram_rewards.png")
     plt.show()
 
-def plot_avg_rewards(data, unique_states, unique_actions):
+def plot_avg_rewards(data, unique_states, unique_actions,save_dir=""):
     # Calculate the average reward for each state-action pair
     avg_rewards = data.groupby(['state', 'action'])['reward'].mean().unstack()
 
@@ -56,7 +58,10 @@ def plot_avg_rewards(data, unique_states, unique_actions):
     plt.legend(title='Action')
     plt.xticks(rotation=0)
     plt.tight_layout()
+    if save_dir != "":
+        plt.savefig(save_dir+"_avg_rewards.png")
     plt.show()
+    
 
     # Print the average reward for each state-action pair
     for state in unique_states:
@@ -76,20 +81,20 @@ def main(db_dir, month_date, hour, model, filename, plot_type):
     unique_actions = data['action'].unique()
 
     if plot_type == 'histograms':
-        plot_histograms(data, unique_states, unique_actions)
+        plot_histograms(data, unique_states, unique_actions,os.path.join(db_dir, month_date, hour, model))
     elif plot_type == 'avg_rewards':
-        plot_avg_rewards(data, unique_states, unique_actions)
+        plot_avg_rewards(data, unique_states, unique_actions,os.path.join(db_dir, month_date, hour, model))
     else:
         print(f"Unknown plot type: {plot_type}. Please choose 'histograms' or 'avg_rewards'.")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Plot reward histograms or average rewards for state-action pairs.')
     parser.add_argument('--db_dir', type=str, default='../data/DB/', help='Database directory')
-    parser.add_argument('--month_date', type=str, default='2024_07/25072024/', help='Month and date')
-    parser.add_argument('--hour', type=str, default='1928/', help='Hour')
+    parser.add_argument('--month_date', type=str, default='2024_07/27072024/', help='Month and date')
+    parser.add_argument('--hour', type=str, default='1508/', help='Hour')
     parser.add_argument('--model', type=str, default='MABLearning/40/hyperparameter_set_0/X_RAY/', help='Model path')
-    parser.add_argument('--filename', type=str, default='learner_1_2.csv_rewards.csv', help='Filename')
-    parser.add_argument('--plot_type', type=str, default='avg_rewards', choices=['histograms', 'avg_rewards'], help='Type of plot to generate')
+    parser.add_argument('--filename', type=str, default='rewards_1_1.csv', help='Filename')
+    parser.add_argument('--plot_type', type=str, default='histograms', choices=['histograms', 'avg_rewards'], help='Type of plot to generate')
 
     args = parser.parse_args()
     main(args.db_dir, args.month_date, args.hour, args.model, args.filename, args.plot_type)

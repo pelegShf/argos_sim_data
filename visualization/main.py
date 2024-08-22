@@ -93,7 +93,13 @@ def plot_avg_series(series_list,color,label='Average Series', error_type='std'):
 def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=True, error_type='std',to_pdf=False,fix_y_axis=0):
     set_plot_params(to_pdf)
 
-    colors = sns.color_palette()
+    # colors = sns.color_palette()
+    # Define two different color palettes
+    palette1 = sns.color_palette("deep")
+    palette2 = sns.color_palette("pastel")
+
+    # Concatenate the two palettes
+    colors = palette1 + palette2
     for idx,series in enumerate(series_list):
         if show_individual:
             plot_individual_series(series,colors[idx])
@@ -105,7 +111,9 @@ def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=
                 plot_avg_series(series,colors[idx], error_type=error_type)
 
     plt.legend()
-    if fix_y_axis > 0: # Fix y-axis to 0-1 for order parameter plots
+    if type(fix_y_axis) is tuple:
+        plt.ylim(fix_y_axis[0],fix_y_axis[1])
+    elif fix_y_axis > 0: # Fix y-axis to 0-1 for order parameter plots
         plt.ylim(0,fix_y_axis)
     if filename is not None:
         plt.savefig(f'{filename}.png')

@@ -61,7 +61,7 @@ def main():
     
     # Plot rewards for every 10th experiment from 850 to 1050
     for idx in range(1, 2,1):
-        file_dir = f"{dir}/robot_actions_{idx}.csv"
+        file_dir = f"{dir}/robot_actions/robot_actions_{idx}.csv"
         use_rolling_average = True  # Change this to False to use average of every 100
         df = load_data(file_dir)
         all_rewards = calculate_rewards(df, use_rolling_average)    

@@ -1,0 +1,10 @@
+#2024_07/05072024/1706/results/d050724_1719/ Avoid-attract 0.11
+2024_07/09072024/1136/avoidAttract/40/hyperparameter_set_1/results/d090724_1139/ Avoid-attract 0.111
+#2024_07/09072024/1136/avoidAttract/40/hyperparameter_set_2/results/d090724_1141/ Avoid-attract 0.109
+#2024_07/09072024/1959/results/d090724_2008/ Random
+2024_08/07082024/1021/results/d070824_1024/ <AVG, None,IA> & 36 states | WLU
+2024_08/07082024/1055/results/d070824_1058/ <CURRENT, None,IA> & 8 states | WLU
+#2024_08/07082024/1125/results/d070824_1128/ <CURRENT, None,WORST> & 8 states | WLU
+#2024_08/07082024/1236/results/d070824_1244/ <CURRENT, None,WORST> & 8 states | EQUAL
+2024_08/07082024/1254/results/d070824_1259/ <CURRENT, None,WORST> & 8 states | WEIGHTED
+2024_08/07082024/1644/results/d070824_1647/ <CURRENT, None,WORST> & 64 states | WLU

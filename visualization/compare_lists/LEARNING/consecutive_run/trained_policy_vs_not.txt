@@ -1,0 +1,10 @@
+2024_07/05072024/1706/results/d050724_1719/ Avoid-attract 1.1
+2024_07/09072024/1136/avoidAttract/40/hyperparameter_set_1/results/d090724_1139/ 1.11
+2024_07/09072024/1136/avoidAttract/40/hyperparameter_set_2/results/d090724_1141/ 1.09
+# 2024_07/09072024/1959/results/d090724_2008/ Random
+# 2024_07/09072024/1444/results/d090724_1452/ No approximation
+2024_07/09072024/1845/results/d090724_1853/ <Current, None, Worst>
+2024_07/11072024/1851/MABLearning/40/2/results/d110724_1857/ <Current, None, Worst> Trained
+2024_07/09072024/2043/results/d090724_2052/ <Avg, None, Worst>
+2024_07/09072024/2059/results/d090724_2107/ <Avg, None, Best>
+2024_07/10072024/0734/results/d100724_0747/ <Avg, Worst, Worst>
