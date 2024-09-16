@@ -1,0 +1,7 @@
+2024_08/20082024/2043/avoidAttract/40/hyperparameter_set_1/results/d200824_2051/ 0.109
+2024_08/20082024/1924/avoidAttract/40/hyperparameter_set_0/results/d200824_1928/ 0.11
+2024_08/20082024/2043/avoidAttract/40/hyperparameter_set_0/results/d200824_2049/ 0.111
+2024_08/27082024/2129/avoidAttract/40/hyperparameter_set_2/results/d270824_2134/ set_2
+2024_08/27082024/2129/avoidAttract/40/hyperparameter_set_3/results/d270824_2135/ set_3
+2024_08/27082024/2129/avoidAttract/40/hyperparameter_set_1/results/d270824_2133/ set_1
+2024_08/27082024/2129/avoidAttract/40/hyperparameter_set_0/results/d270824_2131/ set_0

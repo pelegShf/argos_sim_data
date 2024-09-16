@@ -1,0 +1,17 @@
+2024_08/21082024/1123/avoidAttract/30/hyperparameter_set_0/
+2024_08/21082024/1123/avoidAttract/30/hyperparameter_set_1/ 
+2024_08/21082024/1123/avoidAttract/30/hyperparameter_set_2/ 
+2024_08/21082024/1123/avoidAttract/30/hyperparameter_set_3/ 
+2024_08/21082024/1123/avoidAttract/30/hyperparameter_set_4/ 
+2024_08/21082024/1123/avoidAttract/30/hyperparameter_set_5/
+2024_08/21082024/1123/avoidAttract/30/hyperparameter_set_6/
+2024_08/21082024/1123/avoidAttract/30/hyperparameter_set_7/
+2024_08/21082024/1123/avoidAttract/30/hyperparameter_set_8/
+2024_08/21082024/1123/avoidAttract/30/hyperparameter_set_9/
+2024_08/22082024/0907/avoidAttract/30/hyperparameter_set_0/
+2024_08/22082024/0907/avoidAttract/30/hyperparameter_set_1/
+2024_08/22082024/0907/avoidAttract/30/hyperparameter_set_2/
+2024_08/22082024/1000/avoidAttract/30/hyperparameter_set_0/
+2024_08/22082024/1000/avoidAttract/30/hyperparameter_set_1/
+2024_08/22082024/1000/avoidAttract/30/hyperparameter_set_2/
+2024_08/22082024/1000/avoidAttract/30/hyperparameter_set_3/

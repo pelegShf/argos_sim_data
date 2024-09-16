@@ -97,9 +97,16 @@ def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=
     # Define two different color palettes
     palette1 = sns.color_palette("deep")
     palette2 = sns.color_palette("pastel")
+    palette3 = sns.color_palette("muted")
+    palette4 = sns.color_palette("Paired")
+    palette5 = sns.color_palette("Set1")
+    palette6 = sns.color_palette("Set2")
+    palette7 = sns.color_palette("husl", 9)
+
+
 
     # Concatenate the two palettes
-    colors = palette1 + palette2
+    colors = palette1 + palette2 + palette3 + palette4 + palette5 + palette6 + palette7
     for idx,series in enumerate(series_list):
         if show_individual:
             plot_individual_series(series,colors[idx])
@@ -119,7 +126,6 @@ def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=
         plt.savefig(f'{filename}.png')
     else:
         plt.show()
-
     plt.clf()
 
 # Example usage

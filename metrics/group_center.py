@@ -18,8 +18,9 @@ def calculate_group_centers(graph,df):
     count = 0
     for component in components:
          # If all robots in the component are faulty, skip this component
-        if df.loc[df[ROBOT_ID_COL].isin(component), IS_FAULTY_COL].all():
-            continue
+        if IS_FAULTY_COL in df.columns:
+            if df.loc[df[ROBOT_ID_COL].isin(component), IS_FAULTY_COL].all():
+                continue
         # Get the x, y coordinates of the robots in the component
         x_coords = [graph.nodes[robot_id][X_COL] for robot_id in component]
         y_coords = [graph.nodes[robot_id][Y_COL] for robot_id in component]

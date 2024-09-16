@@ -3,6 +3,10 @@ import pandas as pd
 import argparse
 
 OUTPUT_FOLDER = "./visualization/graphs/4d/"
+INPUT_FOLDER = "./visualization/4d/lists/"
+FILE_TYPE_TXT = ".txt"
+FILE_TYPE_CSV = ".csv" 
+
 
 def parse_settings(settings_file):
     """
@@ -25,7 +29,7 @@ def parse_settings(settings_file):
     return None
 
 
-def calculate_val(metrics_file,experiment_length=5000):
+def calculate_val(metrics_file,experiment_length=5000,window_size=1):
     """
     Calculate the average val from metrics_list.csv every 5000 rows.
     
@@ -38,11 +42,17 @@ def calculate_val(metrics_file,experiment_length=5000):
     df = pd.read_csv(metrics_file)
     order_values = df['orders']
 
-    indices = range((experiment_length-1), len(order_values), experiment_length)
-    selected_values = order_values.iloc[indices]
+    segment_averages = []
+    for start in range(0, len(order_values), experiment_length):
+        end = start + experiment_length
+        if end > len(order_values):
+            break
+        segment = order_values.iloc[end - window_size:end]
+        segment_avg = segment.mean()
+        segment_averages.append(segment_avg)
 
-    val = selected_values.mean()
-    return val
+    overall_avg = sum(segment_averages) / len(segment_averages)
+    return overall_avg
 
 
 def process_experiment_folder(folder_path,settings_prefix='X_RAY/logs/',metrics_prefix='results/'):
@@ -79,7 +89,7 @@ def create_csv_from_locations(file_with_locations, output_csv):
     """
     rows = []
     
-    with open(file_with_locations, 'r') as f:
+    with open(INPUT_FOLDER + file_with_locations+FILE_TYPE_TXT, 'r') as f:
         folder_paths = f.readlines()
     
     for folder_path in folder_paths:
@@ -93,8 +103,7 @@ def create_csv_from_locations(file_with_locations, output_csv):
                 print(f"Error processing {folder_path}: {e}")
     # Create DataFrame and save to CSV
     df = pd.DataFrame(rows, columns=['r1', 'r2', 'r3', 'val'])
-    full_output_csv = os.path.join(OUTPUT_FOLDER, output_csv)
-
+    full_output_csv = os.path.join(OUTPUT_FOLDER, output_csv+FILE_TYPE_CSV)
     df.to_csv(full_output_csv, index=False)
     
     print(f"[INFO] Data saved to {full_output_csv}")
@@ -155,13 +164,13 @@ if __name__ == "__main__":
     parser.add_argument('--db', type=str, default="DB/" ,help="Database folder name (e.g., 'DB')")
     parser.add_argument('--date', type=str, help="Date folder in 'yyyy_mm/ddmmyyyy' format")
     parser.add_argument('--time', type=str, help="Time folder in 'hhmm' format")
-    parser.add_argument('--output_csv', type=str, default="./visualization/graphs/4d/", help="Path to the output CSV file")
-    parser.add_argument('--locations_file', type=str, help="Path to the file containing all experiment folder paths")
+    parser.add_argument('--output_csv', type=str, default="output.csv", help="Output CSV file name (without .csv)")
+    parser.add_argument('--locations_file', type=str, help="File name containing all experiment folder paths (without .txt)")
 
     args = parser.parse_args()
     
     if args.locations_file:
-        create_csv_from_locations(args.locations_file, args.output_csv)
+        create_csv_from_locations(args.locations_file,args.output_csv)
     else:
         if not (args.base_folder and args.db and args.date and args.time):
             parser.error("If not using --locations_file, --base_folder, --db, --date, and --time are required.")

@@ -1,0 +1,5 @@
+2024_08/20082024/2043/avoidAttract/40/hyperparameter_set_1/results/d200824_2051/ {1.0,0.0,0.0}
+2024_08/20082024/1924/avoidAttract/40/hyperparameter_set_0/results/d200824_1928/ {0.0,1.0,0.0}
+2024_08/20082024/2043/avoidAttract/40/hyperparameter_set_0/results/d200824_2049/ {0.0,0.0,1.0}
+2024_09/08092024/1615/mixGroupLearning/40/hyperparameter_set_0/results/d080924_1617/ mix1
+2024_09/09092024/0324/mixGroupLearning/40/hyperparameter_set_0/results/d090924_0326/ mix2

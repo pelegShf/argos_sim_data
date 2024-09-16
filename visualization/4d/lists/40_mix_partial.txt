@@ -1,0 +1,6 @@
+/2024_08/27082024/0933/avoidAttract/40/hyperparameter_set_2/
+/2024_08/27082024/0933/avoidAttract/40/hyperparameter_set_3/
+/2024_08/27082024/0933/avoidAttract/40/hyperparameter_set_5/
+/2024_08/27082024/0933/avoidAttract/40/hyperparameter_set_4/
+/2024_08/27082024/0933/avoidAttract/40/hyperparameter_set_1/
+/2024_08/27082024/0933/avoidAttract/40/hyperparameter_set_0/

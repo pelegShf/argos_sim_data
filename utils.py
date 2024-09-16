@@ -41,12 +41,15 @@ def build_graph(df):
     G = nx.Graph()
 
  # Add nodes with attributes
+    # df.apply(lambda row: G.add_node(row[ROBOT_ID_COL], 
+    #                                  X=row[X_COL], 
+    #                                  Y=row[Y_COL], 
+    #                                  heading=row[HEADING_COL], 
+    #                                  is_faulty=row[IS_FAULTY_COL]), axis=1)
     df.apply(lambda row: G.add_node(row[ROBOT_ID_COL], 
                                      X=row[X_COL], 
                                      Y=row[Y_COL], 
-                                     heading=row[HEADING_COL], 
-                                     is_faulty=row[IS_FAULTY_COL]), axis=1)
-
+                                     heading=row[HEADING_COL]), axis=1)
     # Add edges
     edges = df.assign(neighbors=df[NEIGHBORS_COL].str.split()).explode('neighbors')
     G.add_edges_from(edges[[ROBOT_ID_COL, 'neighbors']].values)

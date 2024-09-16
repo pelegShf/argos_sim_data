@@ -15,13 +15,18 @@ def polarization(df):
     # Create a unit vector at the angle thetha_i
     currentHeadingVec = np.column_stack((np.cos(thetha_i), np.sin(thetha_i)))
 
-    # Only consider rows where 'IsFaulty' is False
-    currentHeadingVec = currentHeadingVec[df[IS_FAULTY_COL] == False]
+    # Only consider rows where 'IsFaulty' is False if the column exists
+    if(IS_FAULTY_COL in df.columns):
+        print(df[IS_FAULTY_COL])
+        currentHeadingVec = currentHeadingVec[df[IS_FAULTY_COL] == False]
     # Calculate the sum
     sum = currentHeadingVec.sum(axis=0)
 
     # Normalize the sum
-    sum /= (N - df[IS_FAULTY_COL].sum())
+    if IS_FAULTY_COL in df.columns:
+        sum /= (N - df[IS_FAULTY_COL].sum())
+    else:
+        sum /= N
 
     # Calculate the order
     order = np.linalg.norm(sum)
