@@ -20,7 +20,16 @@ from consts import DB, RAW_DATA_FILE, NEIGHBORS_FILE
 import utils
 
 
+def run_parallel_processing(raw_data_file_list, metrics, robot_count):
+    num_processes = max(1, multiprocessing.cpu_count() - 4)  # Leave some cores for other processes
+    print(f"Number of processes: {num_processes} running on {num_processes} cores")
 
+    files_list_with_metrics = [(raw_data_file, metrics, robot_count) for raw_data_file in raw_data_file_list]
+
+    with multiprocessing.Pool(processes=num_processes) as pool:
+        results = pool.map(process_file, files_list_with_metrics)
+    
+    return results
 
 
 def get_metrics(metrics):
@@ -36,23 +45,27 @@ def get_metrics(metrics):
 
 # Define a function to process a single file
 def process_file(args):
-    raw_data_filename, metrics,robot_count = args
+    raw_data_filename, metrics, robot_count = args
 
-    exp_data = utils.read_csv(raw_data_filename)
+    try:
+        exp_data = utils.read_csv(raw_data_filename)
 
-    # rows_per_timestep = int(filename.split('/')[-4])
-    rows_per_timestep = robot_count
-    order_in_metrics, union_in_metrics, centers_in_metrics, avg_distance_in_metrics, speed_in_metrics = get_metrics(metrics)
-    # print(f"outputing order: {order_in_metrics} | union: {union_in_metrics} | distance: {avg_distance_in_metrics} | speed: {speed_in_metrics}" )
-    # Build graphs
-    G = utils.build_graphs(exp_data, rows_per_timestep) # Around 17 seconds
-    order = get_order(exp_data, rows_per_timestep) if order_in_metrics else [] # Around 1 second
-    union = get_union(G=G) if union_in_metrics else [] # Around 17 second
-    centers = get_groups_center_and_amount(G=G) if centers_in_metrics else ([], [])
-    avg_distance = get_distance_between_centers(exp_data, G=G) if avg_distance_in_metrics else []
-    avg_speed = get_speed(exp_data) if speed_in_metrics else []
-    # print(f"Time taken for {filename}: {time.time() - start_time} seconds")
-    return order, union, centers, avg_distance,avg_speed
+        rows_per_timestep = robot_count
+        order_in_metrics, union_in_metrics, centers_in_metrics, avg_distance_in_metrics, speed_in_metrics = get_metrics(metrics)
+
+        # Build graphs
+        G = utils.build_graphs(exp_data, rows_per_timestep)  # Around 17 seconds
+        order = get_order(exp_data, rows_per_timestep) if order_in_metrics else []  # Around 1 second
+        union = get_union(G=G) if union_in_metrics else []  # Around 17 seconds
+        centers = get_groups_center_and_amount(G=G) if centers_in_metrics else ([], [])
+        avg_distance = get_distance_between_centers(exp_data, G=G) if avg_distance_in_metrics else []
+        avg_speed = get_speed(exp_data) if speed_in_metrics else []
+
+        return order, union, centers, avg_distance, avg_speed
+
+    except Exception as e:
+        print(f"Error processing {raw_data_filename}: {e}")
+        return None
 
 def infinite_horizon_rewards(rewards):
     # Compute the cumulative sum of the rewards array
@@ -161,12 +174,8 @@ def main():
     file_len = len(raw_data_file_list)
     print(f"Total files: {file_len}")
 
-    num_processes = multiprocessing.cpu_count()
-    pool = multiprocessing.Pool(processes=(num_processes-4))
-    print(f"Number of processes: {num_processes} running on {num_processes-4} cores")
-
-    files_list_with_metrics = [(raw_data_file, metrics,robot_count) for raw_data_file in raw_data_file_list]
-    results = pool.map(process_file, files_list_with_metrics)
+    
+    results = run_parallel_processing(raw_data_file_list, metrics, robot_count)
 
     if log:
         save_logs(f"{experiment_path}/{file_name}",results, metrics)
