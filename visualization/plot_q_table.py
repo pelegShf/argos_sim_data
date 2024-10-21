@@ -26,7 +26,7 @@ step = (end - start) / (STATE_SIZE - 1)
 ranges = [start + i * step for i in range(STATE_SIZE)]
 parser = argparse.ArgumentParser(description="Run multiple experiments")
 parser.add_argument("-i", "--file_paths", type=str, required=True, help="File containing the paths to the files to process")
-parser.add_argument("-pre", "--prefix", type=str, default="/mixGroupLearning/25/hyperparameter_set_3/X_RAY/logs/q_table/", help="File containing the paths to the files to process")
+parser.add_argument("-pre", "--prefix", type=str, default="/mixGroupLearning/40/hyperparameter_set_2/X_RAY/", help="File containing the paths to the files to process")
 parser.add_argument("-m", "--method", choices=['argmax', 'max'], default='argmax', help="Choose method for processing (default: argmax)")
 parser.add_argument("-d", "--data_type", choices=['count', 'value', 'q'], default='q', help="Choose data type to process (default: q)")
 
@@ -51,15 +51,15 @@ sum_list = []
 experiment_number = 1
 for experiment in range(1, 2):
     # Iterate over the file indices
-    for idx in range(0, 25): 
-        file_type = f"learner_{experiment}_{idx}.csv"
+    for idx in range(0, 40): 
+        file_type = f"{experiment}/logs/q_table/learner_{experiment}_{idx}.csv"
         file_path = os.path.join(full_path, file_type)
-        
+
         # Load the CSV file
         data = pd.read_csv(file_path, header=None)
         
         # Extract the last number in each element and convert to float
-        last_numbers = data.applymap(lambda x: float(x.split()[col]))
+        last_numbers = data.map(lambda x: float(x.split()[col]))
         
         # Find the index of the maximum value in each row (argmax)
         if method == 'argmax':
@@ -91,12 +91,12 @@ average_entropy = sum(entropy_values) / len(entropy_values)
 print(f"average_entropy: {average_entropy}")
 
 # Print the count of each value if method is argmax
-if method == 'argmax':
-    print("Count of each value in argmax results:")
-    for col in argmax_df.columns:
-        print(f"State {col}:")
-        print(argmax_df[col].value_counts())
-        print(argmax_df[col].value_counts()/len(argmax_df[col]))
+# if method == 'argmax':
+#     print("Count of each value in argmax results:")
+#     for col in argmax_df.columns:
+#         print(f"State {col}:")
+#         print(argmax_df[col].value_counts())
+#         print(argmax_df[col].value_counts()/len(argmax_df[col]))
 
 # Plot the heatmap of argmax values
 plt.figure(figsize=(12, 8))
@@ -111,6 +111,6 @@ sns.heatmap(argmax_df, annot=True, cmap='viridis', cbar=cbar, fmt=fmt)
 plt.title(f'{data_type} of agents per state')
 plt.xlabel('State')
 plt.ylabel('Agent Index')
-plt.savefig(f'{dir_path}{data_file_name}{model_size_path}heatmap_{data_type}_{method}_{experiment_number}.png')
+plt.savefig(f'{dir_path}{data_file_name}{model_size_path}/{experiment}/heatmap_{data_type}_{method}_{experiment_number}.png')
 plt.show()
 
