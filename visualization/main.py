@@ -29,9 +29,13 @@ def set_plot_params(large):
         plt.rcParams['legend.fontsize'] = 12  # legend font size
 
 
-def plot_individual_series(series_list,color,label='Series'):
+def plot_individual_series(series_list,colors,label='Series'):
 
     for i, series in enumerate(series_list):
+        if (i < len(colors)):
+            color = colors[i]
+        else:
+            color = colors[-1]
         plt.plot(series, color=color, label=label)
 
 def plot_multi_lines(data, filename=None):
@@ -109,7 +113,7 @@ def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=
     colors = palette1 + palette2 + palette3 + palette4 + palette5 + palette6 + palette7
     for idx,series in enumerate(series_list):
         if show_individual:
-            plot_individual_series(series,colors[idx])
+            plot_individual_series(series,colors)
 
         if avg:
             if(len(labels)>0):

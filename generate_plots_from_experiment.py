@@ -89,14 +89,22 @@ def main():
     if (len(order_list) == 0):
         print("[ERROR] No data found.")
         return
-    print(len(order_list))
     # plot order
     plot_series(
         [order_list],
         labels=["Order"],
         filename=f"{DB}{experiment_path}{file_name}/order",
         show_individual=False,
-        error_type="se",
+        error_type="std",
+        fix_y_axis=1,
+    )
+    
+    plot_series(
+        [order_list],
+        labels=["Order"],
+        filename=f"{DB}{experiment_path}{file_name}/individual_order",
+        show_individual=True,
+        error_type="std",
         fix_y_axis=1,
     )
 
@@ -106,7 +114,7 @@ def main():
         labels=["Reward"],
         filename=f"{DB}{experiment_path}{file_name}/reward",
         show_individual=False,
-        error_type="se",
+        error_type="std",
         fix_y_axis=0,
     )
 
@@ -116,7 +124,7 @@ def main():
         labels=["Average Reward"],
         filename=f"{DB}{experiment_path}{file_name}/avg_reward",
         show_individual=False,
-        error_type="se",
+        error_type="std",
         fix_y_axis=0,
     )
 
