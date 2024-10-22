@@ -26,7 +26,7 @@ step = (end - start) / (STATE_SIZE - 1)
 ranges = [start + i * step for i in range(STATE_SIZE)]
 parser = argparse.ArgumentParser(description="Run multiple experiments")
 parser.add_argument("-i", "--file_paths", type=str, required=True, help="File containing the paths to the files to process")
-parser.add_argument("-pre", "--prefix", type=str, default="/mixGroupLearning/40/hyperparameter_set_2/X_RAY/", help="File containing the paths to the files to process")
+parser.add_argument("-pre", "--prefix", type=str, default="/mixGroupLearning/40/hyperparameter_set_0/X_RAY/", help="File containing the paths to the files to process")
 parser.add_argument("-m", "--method", choices=['argmax', 'max'], default='argmax', help="Choose method for processing (default: argmax)")
 parser.add_argument("-d", "--data_type", choices=['count', 'value', 'q'], default='q', help="Choose data type to process (default: q)")
 

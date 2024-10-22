@@ -1,6 +1,7 @@
 import argparse
 from datetime import datetime
 import glob
+import os
 import subprocess
 import time
 from consts import *
@@ -39,35 +40,17 @@ def main():
         "-i", "--file_name", type=str, default=time_path, help="File name"
     )
 
-    parser.add_argument(
-        "-d", "--debug", type=int, default=False, help="Template for experiments"
-    )
-    parser.add_argument(
-        "-m",
-        "--metric",
-        type=lambda s: s.split(","),
-        default="all",
-        help="all or any of: order, union, centers, avg_distance, speed",
-    )
-    parser.add_argument("-l", "--log", type=int, default=True, help="Log the output")
-    parser.add_argument(
-        "-rc",
-        "--robot_count",
-        type=int,
-        default=40,
-        help="The count of robots in the swarm.",
-    )
+
     args = parser.parse_args()
     experiment_path = args.input_path
     file_name = args.file_name
-    log = bool(args.log)
-    metrics = args.metric
-    robot_count = args.robot_count
 
+    full_path = os.path.join(DB, experiment_path, file_name)
     # Get all the files in the experiment path
     swarm_data_file_list = glob.glob(
-        DB + experiment_path + file_name + "/**/" + SWARM_DATA_FILE, recursive=True
+        os.path.join(full_path, "**", SWARM_DATA_FILE), recursive=True
     )
+
     file_len = len(swarm_data_file_list)
     if file_len == 0:
         print("[ERROR] No data found.")
@@ -129,11 +112,11 @@ def main():
     )
 
     end_time = time.time()  # Stop the timer
-    print(f"Running time: {end_time - start_time} seconds")
+    # print(f"Ploting run time: {end_time - start_time} seconds")
 
-    send_notification(
-        "Metric anlysis completed", f"Data is ready at {experiment_path}results/."
-    )
+    # send_notification(
+    #     "Metric anlysis completed", f"Data is ready at {experiment_path}results/."
+    # )
 
 
 def send_notification(title, message):
