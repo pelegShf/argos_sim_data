@@ -1,8 +1,10 @@
+import os
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.cm as cm
+# import utils
 
 ALPHA = 0.3
 
@@ -92,9 +94,11 @@ def plot_avg_series(series_list,color,label='Average Series', error_type='std'):
         plt.fill_between(range(len(avg_series)), avg_series - error, avg_series + error, color=color, alpha=ALPHA) # standard deviation
     elif error_type == 'se':
         plt.fill_between(range(len(avg_series)), avg_series - error, avg_series + error, color=color, alpha=ALPHA) # standard error
+    
+    # save the avg series to a csv file
+    # utils.save_to_csv(avg_series, f'avg_order.csv', ['Order'])
 
-
-def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=True, error_type='std',to_pdf=False,fix_y_axis=0):
+def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=True, error_type='std',to_pdf=False,fix_y_axis=0,last=True):
     set_plot_params(to_pdf)
 
     # colors = sns.color_palette()
@@ -120,17 +124,23 @@ def plot_series(series_list,labels=[], filename=None, avg=True, show_individual=
                 plot_avg_series(series,colors[idx],label=labels[idx],error_type=error_type)
             else:
                 plot_avg_series(series,colors[idx], error_type=error_type)
-
-    plt.legend()
-    if type(fix_y_axis) is tuple:
-        plt.ylim(fix_y_axis[0],fix_y_axis[1])
-    elif fix_y_axis > 0: # Fix y-axis to 0-1 for order parameter plots
-        plt.ylim(0,fix_y_axis)
-    if filename is not None:
-        plt.savefig(f'{filename}.png')
-    else:
-        plt.show()
-    plt.clf()
+    if last:
+        plt.legend()
+        if type(fix_y_axis) is tuple:
+            plt.ylim(fix_y_axis[0],fix_y_axis[1])
+        elif fix_y_axis > 0: # Fix y-axis to 0-1 for order parameter plots
+            plt.ylim(0,fix_y_axis)
+        if filename is not None:
+            # Split the path from the filename by "/"
+            file = filename.split("/")[-1]
+            dirname = filename.replace(file, "")
+            # create path if it doesn't exist
+            if not os.path.exists(os.path.dirname(dirname)):
+                os.makedirs(os.path.dirname(dirname))
+            plt.savefig(f'{dirname}{file}.png')
+        else:
+            plt.show()
+        plt.clf()
 
 # Example usage
 # num_series = 10

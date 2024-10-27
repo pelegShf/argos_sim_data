@@ -13,6 +13,11 @@ import csv
 def read_csv(file_path):
     return pd.read_csv(file_path)
 
+def save_to_csv(data, file_path, header):
+    df = pd.DataFrame(data, columns=header)
+    df.to_csv(file_path, index=False)
+    print(df.head())
+
 def read_custom_csv(file_path, num_columns=40):
     dataframes = []
     
