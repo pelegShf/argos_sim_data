@@ -63,62 +63,62 @@ def main():
     for i, swarm_data_file in enumerate(swarm_data_file_list):
         # csv to dataframe
         swarm_data = utils.read_csv(swarm_data_file)
-        order_col = swarm_data[ORDER_COL]
-        reward_col = swarm_data[REWARD_COL]
-        avg_reward_col = swarm_data[AVG_REWARD_COL]
-        order_list.append(order_col)
-        reward_list.append(reward_col)
-        avg_reward_list.append(avg_reward_col)
+        # Check if ORDER_COL exists
+        if ORDER_COL in swarm_data.columns:
+            order_col = swarm_data[ORDER_COL]
+            order_list.append(order_col)
+
+        if REWARD_COL in swarm_data.columns:
+            reward_col = swarm_data[REWARD_COL]
+            reward_list.append(reward_col)
+
+        if AVG_REWARD_COL in swarm_data.columns:
+            avg_reward_col = swarm_data[AVG_REWARD_COL]
+            avg_reward_list.append(avg_reward_col)
     # Save avg order to file
 
     if (len(order_list) == 0):
         print("[ERROR] No data found.")
         return
     # plot order
-    plot_series(
-        [order_list],
-        labels=["Order"],
-        filename=f"{DB}{experiment_path}{file_name}/order",
-        show_individual=False,
-        error_type="se",
-        fix_y_axis=1,
-    )
-    
-    plot_series(
-        [order_list],
-        labels=["Order"],
-        filename=f"{DB}{experiment_path}{file_name}/individual_order",
-        show_individual=True,
-        error_type="se",
-        fix_y_axis=1,
-    )
+    if ORDER_COL in swarm_data.columns:
+        plot_series(
+            [order_list],
+            labels=["Order"],
+            filename=f"{DB}{experiment_path}{file_name}/order",
+            show_individual=False,
+            error_type="se",
+            fix_y_axis=1,
+        )
+    if ORDER_COL in swarm_data.columns:
+        plot_series(
+            [order_list],
+            labels=["Order"],
+            filename=f"{DB}{experiment_path}{file_name}/individual_order",
+            show_individual=True,
+            error_type="se",
+            fix_y_axis=1,
+        )
 
-    # plot reward
-    plot_series(
-        [reward_list],
-        labels=["Reward"],
-        filename=f"{DB}{experiment_path}{file_name}/reward",
-        show_individual=False,
-        error_type="se",
-        fix_y_axis=0,
-    )
+    if REWARD_COL in swarm_data.columns:
+        plot_series(
+            [reward_list],
+            labels=["Reward"],
+            filename=f"{DB}{experiment_path}{file_name}/reward",
+            show_individual=False,
+            error_type="se",
+            fix_y_axis=0,
+        )
 
-        # plot reward
-    plot_series(
-        [avg_reward_list],
-        labels=["Average Reward"],
-        filename=f"{DB}{experiment_path}{file_name}/avg_reward",
-        show_individual=False,
-        error_type="se",
-        fix_y_axis=0,
-    )
-
-    end_time = time.time()  # Stop the timer
-    # print(f"Ploting run time: {end_time - start_time} seconds")
-
-    # send_notification(
-    #     "Metric anlysis completed", f"Data is ready at {experiment_path}results/."
-    # )
+    if AVG_REWARD_COL in swarm_data.columns:
+        plot_series(
+            [avg_reward_list],
+            labels=["Average Reward"],
+            filename=f"{DB}{experiment_path}{file_name}/avg_reward",
+            show_individual=False,
+            error_type="se",
+            fix_y_axis=0,
+        )
 
 
 def send_notification(title, message):
